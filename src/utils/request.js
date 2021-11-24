@@ -24,7 +24,7 @@ service.interceptors.response.use((res) => {
   const { code, data, msg } = res.data
   if (code === 200) {
     return data
-  } else if (code === 40001) {
+  } else if (code === 50001) {
     ElMessage.error(TOKEN_ERROR)
     setTimeout(() => {
       router.push('/login')
@@ -46,6 +46,9 @@ function request (options) {
   if (options.method.toLowerCase() === 'get') {
     // 后面组件中在调用接口的时候 传过来的都在对象的data属性中 
     options.params = options.data
+  }
+  if (typeof options.mock !== 'undefined') {
+    config.mock = options.mock
   }
   // 这一点很重要 如果是线上环境这里的baseApi 一定不能出错 不然一上线就是 p0级bug
   if (config.env === 'prod') {
