@@ -15,26 +15,7 @@
         :collapse="isCollapse"
         router
       >
-        <el-sub-menu index="1">
-          <template #title>
-            <el-icon class="el-icon-setting">
-              <setting></setting>
-            </el-icon>
-            <span>系统管理</span>
-          </template>
-          <el-menu-item index="1-1">用户管理</el-menu-item>
-          <el-menu-item index="1-2">菜单管理</el-menu-item>
-        </el-sub-menu>
-        <el-sub-menu index="2">
-          <template #title>
-            <el-icon class="el-icon-setting">
-              <setting></setting>
-            </el-icon>
-            <span>审批管理</span>
-          </template>
-          <el-menu-item index="2-1">休假管理</el-menu-item>
-          <el-menu-item index="2-2">待我审批</el-menu-item>
-        </el-sub-menu>
+        <tree-menu :userMenu="userMenu" />
       </el-menu>
     </div>
     <div :class="['content-right', isCollapse ? 'fold' : 'unfold']">
@@ -46,7 +27,11 @@
           <div class="bread">面包屑</div>
         </div>
         <div class="user-info">
-          <el-badge :is-dot="true" class="notice" type="danger">
+          <el-badge
+            :is-dot="noticeCount > 0 ? true : false"
+            class="notice"
+            type="danger"
+          >
             <i class="el-icon-bell"></i>
           </el-badge>
           <el-dropdown @command="handleLogout">
@@ -75,19 +60,24 @@
 </template>
 
 <script>
+import TreeMenu from "./TreeMenu.vue";
 export default {
   name: "Home",
+  components: {
+    TreeMenu,
+  },
   data() {
     return {
       isCollapse: false,
-      userInfo: {
-        userName: "jason",
-        userEmail: "jason@admin.com",
-      },
+      userInfo: this.$store.state.userInfo,
       userMenu: [],
+      noticeCount: 0,
     };
   },
-
+  mounted() {
+    this.getNoticeCount();
+    this.getMenuList();
+  },
   methods: {
     handleLogout(key) {
       // console.log(key);
@@ -98,6 +88,14 @@ export default {
     },
     toggle() {
       this.isCollapse = !this.isCollapse;
+    },
+    async getNoticeCount() {
+      const res = await this.$api.noticeCount();
+      this.noticeCount = res;
+    },
+    async getMenuList() {
+      const res = await this.$api.menuList();
+      this.userMenu = res;
     },
   },
 };
