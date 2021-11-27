@@ -16,6 +16,30 @@
         router
       >
         <tree-menu :userMenu="userMenu" />
+
+        <!-- <template v-for="menu in userMenu">
+          <el-sub-menu
+            v-if="
+              menu.children &&
+              menu.children.length > 0 &&
+              menu.children[0].menuType == 1
+            "
+            :key="menu._id"
+            :index="menu.path"
+          >
+            <template #title>
+              <i :class="menu.icon"></i>
+              <span>{{ menu.menuName }}</span>
+            </template>
+            <tree-menu :userMenu="menu.children"></tree-menu>
+          </el-sub-menu>
+          <el-menu-item
+            v-else-if="menu.menuType == 1"
+            :key="menu._id"
+            :index="menu.path"
+            >{{ menu.menuName }}</el-menu-item
+          >
+        </template> -->
       </el-menu>
     </div>
     <div :class="['content-right', isCollapse ? 'fold' : 'unfold']">
@@ -24,7 +48,9 @@
           <div class="menu-fold" @click="toggle">
             <i class="el-icon-s-fold"></i>
           </div>
-          <div class="bread">面包屑</div>
+          <div class="bread">
+            <breadcrumb />
+          </div>
         </div>
         <div class="user-info">
           <el-badge
@@ -51,9 +77,7 @@
         </div>
       </div>
       <div class="wrapper">
-        <div class="main-page">
-          <router-view></router-view>
-        </div>
+        <router-view></router-view>
       </div>
     </div>
   </div>
@@ -61,10 +85,12 @@
 
 <script>
 import TreeMenu from "./TreeMenu.vue";
+import Breadcrumb from "./Breadcrumb.vue";
 export default {
   name: "Home",
   components: {
     TreeMenu,
+    Breadcrumb,
   },
   data() {
     return {
