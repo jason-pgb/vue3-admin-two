@@ -23,7 +23,7 @@ export default {
         return request({
             url: '/menu/list',
             method: 'get',
-            mock: true,
+            // mock: true,
             data: {},
         })
     },
@@ -31,7 +31,6 @@ export default {
         return request({
             url: '/users/list',
             method: 'get',
-            mock: false,
             data: params
         })
     },
@@ -39,7 +38,7 @@ export default {
         return request({
             url: '/users/delete',
             method: 'post',
-            mock: true,
+            // mock: true,
             data: params
         })
     },
@@ -61,7 +60,15 @@ export default {
         return request({
             url: '/users/operate',
             method: 'post',
-            mock: true,
+            // mock: true,
+            data: params
+        })
+    },
+    menuSubmit(params) {
+        return request({
+            url: '/menu/operate',
+            method: 'post',
+            // mock: true,
             data: params
         })
     }

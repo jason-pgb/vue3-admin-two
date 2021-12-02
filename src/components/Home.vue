@@ -121,6 +121,7 @@ export default {
     },
     async getMenuList() {
       const res = await this.$api.menuList();
+      console.log(res);
       this.userMenu = res;
     },
   },

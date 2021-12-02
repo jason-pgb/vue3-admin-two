@@ -68,7 +68,11 @@
       </el-pagination>
     </div>
 
-    <el-dialog title="用户新增" v-model="showModal">
+    <el-dialog
+      title="用户新增"
+      v-model="showModal"
+      :before-close="handleCloseDialog"
+    >
       <el-form
         :model="userForm"
         ref="dialogForm"
@@ -155,7 +159,7 @@ export default {
     });
     // 查找的数据
     const user = reactive({
-      state: 0,
+      state: 1,
     });
     // 用户列表
     const userList = ref([]);
@@ -241,11 +245,11 @@ export default {
         userIds: [row.userId],
       });
 
-      if (res.nModified > 0) {
+      if (res.modifiedCount > 0) {
         proxy.$message.success("删除成功");
         getUserList();
       } else {
-        proxy.$message.success("删除失败");
+        proxy.$message.error("删除失败");
       }
     };
     const checkdUsersIds = ref([]);
@@ -259,11 +263,11 @@ export default {
         userIds: checkdUsersIds.value,
       });
 
-      if (res.nModified > 0) {
+      if (res.modifiedCount > 0) {
         proxy.$message.success("删除成功");
         getUserList();
       } else {
-        proxy.$message.success("删除失败");
+        proxy.$message.error("删除失败");
       }
     };
     const handleSelectionChange = (list) => {
@@ -306,7 +310,7 @@ export default {
       mobile: [
         {
           pattern: /1[3-9]\d{9}/,
-          message: "请输入正确的手机格式",
+          message: "请输入正确的手机号格式",
           trigger: "blur",
         },
       ],
@@ -336,7 +340,12 @@ export default {
           let res = await proxy.$api.userSubmit(params);
           if (res) {
             showModal.value = false;
-            proxy.$message.success("新增用户成功");
+            if (action.value == "add") {
+              proxy.$message.success("新增用户成功");
+            } else {
+              proxy.$message.success("编辑用户成功");
+            }
+
             handleReset("dialogForm");
             getUserList();
           }
@@ -348,8 +357,15 @@ export default {
       action.value = "edit";
       showModal.value = true;
       proxy.$nextTick(() => {
+        // row.state = Number(row.state);
+        row.state = row.state - 0;
         Object.assign(userForm, row);
       });
+    };
+
+    const handleCloseDialog = () => {
+      handleReset("dialogForm");
+      showModal.value = false;
     };
 
     return {
@@ -376,6 +392,7 @@ export default {
       handleSubmit,
       handleEdit,
       action,
+      handleCloseDialog,
     };
   },
 };
